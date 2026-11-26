@@ -1,119 +1,54 @@
 <img align="left" width="80" height="80"
 src=".github/repo_icon.png" alt="App icon">
 
-# FlorisBoard [![Crowdin](https://badges.crowdin.net/florisboard/localized.svg)](https://crowdin.florisboard.org) [![Matrix badge](https://img.shields.io/badge/chat-%23florisboard%3amatrix.org-blue)](https://matrix.to/#/#florisboard:matrix.org) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md) [![FlorisBoard CI](https://github.com/florisboard/florisboard/actions/workflows/android.yml/badge.svg?event=push)](https://github.com/florisboard/florisboard/actions/workflows/android.yml)
+# FlorisBoard Suggestions [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-**FlorisBoard** is a free and open-source keyboard for Android 8.0+
-devices. It aims at being modern, user-friendly and customizable while
-fully respecting your privacy. Currently in beta state.
-
-<table>
-<tr>
-<th style="text-align: center; width: 50%">
-<h3>Stable <a href="https://github.com/florisboard/florisboard/releases/latest"><img alt="Latest stable release" src="https://img.shields.io/github/v/release/florisboard/florisboard?sort=semver&display_name=tag&color=28a745"></a></h3>
-</th>
-<th style="text-align: center; width: 50%">
-<h3>Preview <a href="https://github.com/florisboard/florisboard/releases"><img alt="Latest preview release" src="https://img.shields.io/github/v/release/florisboard/florisboard?include_prereleases&sort=semver&display_name=tag&color=fd7e14"></a></h3>
-</th>
-</tr>
-<tr>
-<td style="vertical-align: top">
-<p><i>Major versions only</i><br><br>Updates are more polished, new features are matured and tested through to ensure a stable experience.</p>
-</td>
-<td style="vertical-align: top">
-<p><i>Major + Alpha/Beta/Rc versions</i><br><br>Updates contain new features that may not be fully matured yet and bugs are more likely to occur. Allows you to give early feedback.</p>
-</td>
-</tr>
-<tr>
-<td style="vertical-align: top">
-<p>
-<a href="https://apt.izzysoft.de/fdroid/index/apk/dev.patrickgold.florisboard"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" height="64" alt="IzzySoft repo badge"></a>
-<a href="https://f-droid.org/packages/dev.patrickgold.florisboard"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="64" alt="F-Droid badge"></a>
-</p>
-<p>
-
-**Google Play**: Join the [FlorisBoard Test Group](https://groups.google.com/g/florisboard-closed-beta-test), then visit the [testing page](https://play.google.com/apps/testing/dev.patrickgold.florisboard). Once joined and installed, updates will be delivered like for any other app. ([Store entry](https://play.google.com/store/apps/details?id=dev.patrickgold.florisboard))
-
-</p>
-<p>
-
-**Obtainium**: [Auto-import stable config][obtainium_stable]
-
-</p>
-<p>
-
-**Manual**: Download and install the APK from the release page.
-
-</p>
-</td>
-<td style="vertical-align: top">
-<p><a href="https://apt.izzysoft.de/fdroid/index/apk/dev.patrickgold.florisboard.beta"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" height="64" alt="IzzySoft repo badge"></a></p>
-<p>
-
-**Google Play**: Join the [FlorisBoard Test Group](https://groups.google.com/g/florisboard-closed-beta-test), then visit the [preview testing page](https://play.google.com/apps/testing/dev.patrickgold.florisboard.beta). Once joined and installed, updates will be delivered like for any other app. ([Store entry](https://play.google.com/store/apps/details?id=dev.patrickgold.florisboard.beta))
-
-</p>
-<p>
-
-**Obtainium**: [Auto-import preview config][obtainium_preview]
-
-</p>
-<p>
-
-**Manual**: Download and install the APK from the release page.
-
-</p>
-</td>
-</tr>
-</table>
-
-Beginning with v0.7 FlorisBoard will enter the public beta on Google Play.
-
-## Highlighted features
-- Integrated clipboard manager / history
-- Advanced theming support and customization
-- Integrated extension support (still evolving)
-- Emoji keyboard / history / suggestions
+A personal fork of [FlorisBoard](https://github.com/florisboard/florisboard), the free and open-source keyboard for Android 8.0+ devices. This fork adds on-device word suggestions, an adjustable keyboard height, larger emoji page controls and QWERTY long-press hints.
 
 > [!IMPORTANT]
-> Word suggestions/spell checking are not included in the current releases
-> and are a major goal for the v0.6 milestone.
+> This is an unofficial fork. It is not affiliated with or endorsed by the FlorisBoard project, and it is not published to any app store. For the official keyboard, releases and support, please use the [upstream project](https://github.com/florisboard/florisboard).
 
-Feature roadmap: See [ROADMAP.md](ROADMAP.md)
+## What is different from upstream
 
-## Contributing
-Want to contribute to FlorisBoard? That's great to hear! There are lots of
-different ways to help out, please see the [contribution guidelines](CONTRIBUTING.md) for more info.
+### Word suggestions
+- While you type, the smartbar suggests the most common words that start with the letters you have typed. Tapping a suggestion replaces the partial word and adds a space.
+- Suggestions come from a bundled English word-frequency dictionary (about 50,000 words) and are computed entirely on the device.
+- Capitalization follows what you typed (`Hel` suggests `Hello`, `HEL` suggests `HELLO`).
+- Turn on **Display suggestions** in the app settings. It is off by default.
 
-## Addons Store
-The official [Addons Store](https://beta.addons.florisboard.org) offers the possibility for the community to share and download FlorisBoard extensions.
-Instructions on how to publish addons can be found [here](https://docs.florisboard.org/publishing).
+**Limitations:** English only. This is word completion, not prediction: there is no next-word prediction, no learning from what you type, no autocorrect and no spell checking.
 
-Many thanks to Ali ([@4H1R](https://github.com/4H1R)) for implementing the store!
+### Keyboard height
+- A new **Keyboard height** slider (75% to 150%) in the keyboard settings scales the height of the keyboard rows and the smartbar.
 
-> [!NOTE]
-> During the initial beta release phase, the Addons Store _will_ only accept theme extensions.
-> Later on we plan to add support for language packs and keyboard extensions.
+### Emoji page
+- Emojis, the emoji grid, and the skin-tone and history popups now scale in proportion to the keyboard font size slider.
+- The **ABC** and **backspace** buttons on the emoji page are larger and also scale with the font size slider. The bottom row grows taller when the font size is above 100%.
+- The built-in themes were updated to support this: less vertical padding on the bottom row buttons, and a font size added to the themes that had none.
 
-## List of permissions FlorisBoard requests
-Please refer to this [page](https://docs.florisboard.org/permissions)
-to get more information on this topic.
+### QWERTY layout
+- Long-press hints: the top row shows `1`-`0` and the home row shows `@ # $ % & - + ( )`. Long-press a key to insert the hinted character. The existing accent popups are still available in the same popup.
+- The keyboard now loads the QWERTY layout. Upstream's placeholder loader was hardcoded to a QWERTZ test layout. The layout is still fixed and is not chosen by language.
 
-## APK signing certificate hashes
+## Building
 
-The package names and SHA-256 hashes of the signature certificate are listed below, so you can verify both FlorisBoard variants with apksigner by using `apksigner verify --print-certs florisboard-<version>-<track>.apk` when you download the APK.
-If you have [AppVerifier](https://github.com/soupslurpr/AppVerifier) installed, you can alternatively copy both the package name and the hash of the corresponding track and share them to AppVerifier.
+Install the Android SDK and point `sdk.dir` in `local.properties` at it. The project pins its CMake version in `gradle/tools.versions.toml`, so install that version from the SDK Manager (or adjust it locally).
 
-##### Stable track:
+```
+./gradlew assembleDebug            # debug build, app id dev.patrickgold.florisboard.debug
+./gradlew assembleBeta             # minified build, app id dev.patrickgold.florisboard.beta (unsigned)
+./gradlew :app:testDebugUnitTest   # unit tests
+```
 
-dev.patrickgold.florisboard<br>
-0B:80:71:64:50:8E:AF:EB:1F:BB:81:5B:E7:A2:3C:77:FE:68:9D:94:B1:43:75:C9:9B:DA:A9:B6:57:7F:D6:D6
+There are no prebuilt releases. Builds from this fork are not signed with the official FlorisBoard release key, so the store links, update channels and signing certificate hashes in the upstream README do not apply here. The `beta` build is unsigned, so you have to sign it yourself before it can be installed.
 
-##### Preview track:
+## AI assistance
 
-dev.patrickgold.florisboard.beta<br>
-0B:80:71:64:50:8E:AF:EB:1F:BB:81:5B:E7:A2:3C:77:FE:68:9D:94:B1:43:75:C9:9B:DA:A9:B6:57:7F:D6:D6
+The changes in this fork were written with an AI coding assistant at the direction of the repository owner. FlorisBoard's [AI policy](AI_POLICY.md) does not allow AI-written code or commit messages in contributions to the upstream project, so these changes are not intended for upstream and should not be submitted there.
 
+## Upstream
+
+Everything not listed above is unchanged from [florisboard/florisboard](https://github.com/florisboard/florisboard). The full list of changes is in this repository's commit history. For the Addons Store, permissions and roadmap, see the upstream documentation: [docs.florisboard.org](https://docs.florisboard.org) and [ROADMAP.md](ROADMAP.md).
 
 ## Used libraries, components and icons
 * [AndroidX libraries](https://github.com/androidx/androidx) by
@@ -148,11 +83,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-Thanks to [The FlorisBoard Contributors](https://github.com/florisboard/florisboard/graphs/contributors) for making this project possible!
+This is a modified version of FlorisBoard. The modifications are described above and recorded in the commit history.
 
-<!-- BEGIN SECTION: obtainium_links -->
-<!-- auto-generated link templates, do NOT edit by hand -->
-<!-- see fastlane/update-readme.sh -->
-[obtainium_preview]: https://apps.obtainium.imranr.dev/redirect.html?r=obtainium://app/%7B%22id%22%3A%22dev.patrickgold.florisboard.beta%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fflorisboard%2Fflorisboard%22%2C%22author%22%3A%22florisboard%22%2C%22name%22%3A%22FlorisBoard%20Preview%22%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Atrue%2C%5C%22fallbackToOlderReleases%5C%22%3Atrue%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22preview%5C%22%7D%22%7D%0A
-[obtainium_stable]: https://apps.obtainium.imranr.dev/redirect.html?r=obtainium://app/%7B%22id%22%3A%22dev.patrickgold.florisboard%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fflorisboard%2Fflorisboard%22%2C%22author%22%3A%22florisboard%22%2C%22name%22%3A%22FlorisBoard%20Stable%22%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%2C%5C%22fallbackToOlderReleases%5C%22%3Atrue%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22stable%5C%22%7D%22%7D%0A
-<!-- END SECTION: obtainium_links -->
+Thanks to [The FlorisBoard Contributors](https://github.com/florisboard/florisboard/graphs/contributors) for making this project possible!
