@@ -73,9 +73,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -109,6 +111,40 @@ import kotlin.math.ceil
 private val EmojiCategoryValues = EmojiCategory.entries
 private val EmojiBaseWidth = 42.dp
 private val EmojiDefaultFontSize = 22.sp
+
+/**
+ * Emoji sizing derived from the themed font size of the emoji key. The theme applies the user's keyboard font size
+ * multiplier to this value, so everything here scales proportionally with the font size slider.
+ *
+ * @property fontSize The emoji glyph size.
+ * @property cellWidth The width (and height) of one emoji cell, grown in proportion to the glyph so larger emojis fit.
+ * @property popupKeyHeight The height of a key in the long-press popups.
+ */
+private data class EmojiMetrics(
+    val fontSize: TextUnit,
+    val cellWidth: Dp,
+    val popupKeyHeight: Dp,
+)
+
+@Composable
+private fun rememberEmojiMetrics(): EmojiMetrics {
+    val style = rememberSnyggThemeQuery(FlorisImeUi.MediaEmojiKey.elementName)
+    val fontSize = style.fontSize(default = EmojiDefaultFontSize)
+    val scale = emojiScaleOf(fontSize)
+    val smartbarHeight = FlorisImeSizing.smartbarHeight
+    return remember(fontSize, smartbarHeight) {
+        EmojiMetrics(
+            fontSize = fontSize,
+            cellWidth = EmojiBaseWidth * scale,
+            popupKeyHeight = smartbarHeight * scale,
+        )
+    }
+}
+
+/** Ratio of [fontSize] to the default emoji font size, or 1 if the size is not a usable sp value. */
+internal fun emojiScaleOf(fontSize: TextUnit): Float {
+    return if (fontSize.isSp && fontSize.value > 0f) fontSize.value / EmojiDefaultFontSize.value else 1f
+}
 
 private val VariantsTriangleShapeLtr = GenericShape { size, _ ->
     moveTo(x = size.width, y = 0f)
@@ -157,6 +193,7 @@ fun EmojiPaletteView(
             }
         }
     }
+    val emojiMetrics = rememberEmojiMetrics()
     val androidKeyguardManager = remember { context.systemService(AndroidKeyguardManager::class) }
 
     val deviceLocked = androidKeyguardManager.let { it.isDeviceLocked || it.isKeyguardLocked }
@@ -192,6 +229,7 @@ fun EmojiPaletteView(
             emojiSet = emojiSet,
             emojiCompatInstance = emojiCompatInstance,
             preferredSkinTone = preferredSkinTone,
+            emojiMetrics = emojiMetrics,
             isPinned = isPinned,
             isRecent = isRecent,
             onEmojiInput = { emoji ->
@@ -365,7 +403,7 @@ fun EmojiPaletteView(
                         modifier = Modifier
                             .fillMaxSize()
                             .florisScrollbar(lazyGridState),
-                        columns = GridCells.Adaptive(minSize = EmojiBaseWidth),
+                        columns = GridCells.Adaptive(minSize = emojiMetrics.cellWidth),
                         state = lazyGridState,
                     ) {
                         if (emojiMapping.pinned.isNotEmpty()) {
@@ -401,6 +439,7 @@ private fun EmojiKey(
     emojiSet: EmojiSet,
     emojiCompatInstance: EmojiCompat?,
     preferredSkinTone: EmojiSkinTone,
+    emojiMetrics: EmojiMetrics,
     isPinned: Boolean,
     isRecent: Boolean,
     onEmojiInput: (Emoji) -> Unit,
@@ -455,6 +494,7 @@ private fun EmojiKey(
             EmojiHistoryPopup(
                 emoji = base,
                 visible = showVariantsBox,
+                emojiMetrics = emojiMetrics,
                 isCurrentlyPinned = isPinned,
                 onHistoryAction = {
                     onHistoryAction()
@@ -468,6 +508,7 @@ private fun EmojiKey(
             EmojiVariationsPopup(
                 variations = variations,
                 visible = showVariantsBox,
+                emojiMetrics = emojiMetrics,
                 emojiCompatInstance = emojiCompatInstance,
                 onEmojiTap = { emoji ->
                     onEmojiInput(emoji)
@@ -486,11 +527,12 @@ private fun EmojiKey(
 private fun EmojiVariationsPopup(
     variations: List<Emoji>,
     visible: Boolean,
+    emojiMetrics: EmojiMetrics,
     emojiCompatInstance: EmojiCompat?,
     onEmojiTap: (Emoji) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val emojiKeyHeight = FlorisImeSizing.smartbarHeight
+    val emojiKeyHeight = emojiMetrics.popupKeyHeight
 
     if (visible) {
         Popup(
@@ -504,7 +546,7 @@ private fun EmojiVariationsPopup(
             SnyggRow(
                 elementName = FlorisImeUi.MediaEmojiKeyPopupBox.elementName,
                 modifier = Modifier
-                    .widthIn(max = EmojiBaseWidth * 6),
+                    .widthIn(max = emojiMetrics.cellWidth * 6),
             ) {
                 for (emoji in variations) {
                     SnyggBox(
@@ -513,7 +555,7 @@ private fun EmojiVariationsPopup(
                             .pointerInput(Unit) {
                                 detectTapGestures { onEmojiTap(emoji) }
                             }
-                            .width(EmojiBaseWidth)
+                            .width(emojiMetrics.cellWidth)
                             .height(emojiKeyHeight),
                     ) {
                         EmojiText(
@@ -532,13 +574,14 @@ private fun EmojiVariationsPopup(
 private fun EmojiHistoryPopup(
     emoji: Emoji,
     visible: Boolean,
+    emojiMetrics: EmojiMetrics,
     isCurrentlyPinned: Boolean,
     onHistoryAction: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val prefs by FlorisPreferenceStore
     val scope = rememberCoroutineScope()
-    val emojiKeyHeight = FlorisImeSizing.smartbarHeight
+    val emojiKeyHeight = emojiMetrics.popupKeyHeight
     val interactionController = LocalInteractionController.current
     val pinnedUS by prefs.emoji.historyPinnedUpdateStrategy.collectAsState()
     val recentUS by prefs.emoji.historyRecentUpdateStrategy.collectAsState()
@@ -558,7 +601,7 @@ private fun EmojiHistoryPopup(
                         }
                     }
                 }
-                .width(EmojiBaseWidth)
+                .width(emojiMetrics.cellWidth)
                 .height(emojiKeyHeight),
         ) {
             SnyggIcon(
@@ -581,7 +624,7 @@ private fun EmojiHistoryPopup(
             SnyggRow(
                 elementName = FlorisImeUi.MediaEmojiKeyPopupBox.elementName,
                 modifier = Modifier
-                    .widthIn(max = EmojiBaseWidth * 6),
+                    .widthIn(max = emojiMetrics.cellWidth * 6),
             ) {
                 if (isCurrentlyPinned) {
                     Action(
@@ -636,18 +679,20 @@ fun EmojiText(
     emojiCompatInstance: EmojiCompat?,
     modifier: Modifier = Modifier,
     color: Color = Color.Black,
-    fontSize: TextUnit = EmojiDefaultFontSize,
+    fontSize: TextUnit = TextUnit.Unspecified,
 ) {
+    // Unless the caller picks a size, follow the themed emoji key size, which includes the font size multiplier.
+    val resolvedFontSize = if (fontSize.isSpecified) fontSize else rememberEmojiMetrics().fontSize
     if (emojiCompatInstance != null) {
         AndroidView(
             modifier = modifier,
             factory = { context ->
                 EmojiTextView(context).also {
-                    it.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.value)
                     it.setTextColor(color.toArgb())
                 }
             },
             update = { view ->
+                view.setTextSize(TypedValue.COMPLEX_UNIT_SP, resolvedFontSize.value)
                 view.text = text
             },
         )
@@ -656,11 +701,11 @@ fun EmojiText(
             modifier = modifier,
             factory = { context ->
                 TextView(context).also {
-                    it.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.value)
                     it.setTextColor(color.toArgb())
                 }
             },
             update = { view ->
+                view.setTextSize(TypedValue.COMPLEX_UNIT_SP, resolvedFontSize.value)
                 view.text = text
             },
         )

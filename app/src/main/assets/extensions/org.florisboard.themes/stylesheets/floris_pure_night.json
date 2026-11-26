@@ -476,7 +476,7 @@
   },
   "media-bottom-row-button": {
     "font-size": "22sp",
-    "padding": "16dp 0dp",
+    "padding": "2dp 0dp",
     "shape": "var(--shape)"
   },
   "media-emoji-key-popup-extended-indicator": {
