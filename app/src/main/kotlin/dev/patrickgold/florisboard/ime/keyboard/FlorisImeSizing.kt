@@ -105,13 +105,16 @@ object FlorisImeSizing {
 fun ProvideKeyboardRowBaseHeight(content: @Composable () -> Unit) {
     val windowController = LocalWindowController.current
     val density = LocalDensity.current
+    val prefs by FlorisPreferenceStore
 
     val windowSpec by windowController.activeWindowSpec.collectAsState()
+    val keyboardHeightFactor by prefs.keyboard.keyboardHeightFactor.collectAsState()
 
-    val heights by remember {
+    val heights by remember(keyboardHeightFactor) {
         derivedStateOf {
-            val rowHeight = windowSpec.calcRowHeight(windowSpec.props.keyboardHeight)
-            val smartbarRowHeight = windowSpec.calcSmartbarRowHeight(windowSpec.props.keyboardHeight)
+            val heightFactor = keyboardHeightFactor / 100f
+            val rowHeight = windowSpec.calcRowHeight(windowSpec.props.keyboardHeight) * heightFactor
+            val smartbarRowHeight = windowSpec.calcSmartbarRowHeight(windowSpec.props.keyboardHeight) * heightFactor
             rowHeight to smartbarRowHeight
         }
     }

@@ -88,7 +88,7 @@ fun KeyboardScreen() {
     ) { contentPadding ->
         ScrollableScreenColumn(contentPadding) {
             SegmentedListColumn {
-                val count = 7
+                val count = 8
                 SwitchPreference(
                     prefs.keyboard.numberRow,
                     shapes = ListItemDefaults.segmentedShapes(0, count),
@@ -120,9 +120,18 @@ fun KeyboardScreen() {
                     stepIncrement = 5,
                 )
                 DialogSliderPreference(
+                    prefs.keyboard.keyboardHeightFactor,
+                    shapes = ListItemDefaults.segmentedShapes(4, count),
+                    title = "Keyboard height",
+                    valueLabel = { stringRes(R.string.unit__percent__symbol, "v" to it) },
+                    min = 75,
+                    max = 150,
+                    stepIncrement = 5,
+                )
+                DialogSliderPreference(
                     primaryPref = prefs.keyboard.keySpacingVertical,
                     secondaryPref = prefs.keyboard.keySpacingHorizontal,
-                    shapes = ListItemDefaults.segmentedShapes(4, count),
+                    shapes = ListItemDefaults.segmentedShapes(5, count),
                     title = stringRes(R.string.pref__keyboard__key_spacing__label),
                     primaryLabel = stringRes(R.string.screen_orientation__vertical),
                     secondaryLabel = stringRes(R.string.screen_orientation__horizontal),
@@ -133,13 +142,13 @@ fun KeyboardScreen() {
                 )
                 ListPreference(
                     prefs.keyboard.landscapeInputUiMode,
-                    shapes = ListItemDefaults.segmentedShapes(5, count),
+                    shapes = ListItemDefaults.segmentedShapes(6, count),
                     title = stringRes(R.string.pref__keyboard__landscape_input_ui_mode__label),
                     entries = enumDisplayEntriesOf(LandscapeInputUiMode::class),
                 )
                 ListPreference(
                     prefs.keyboard.incognitoDisplayMode,
-                    shapes = ListItemDefaults.segmentedShapes(6, count),
+                    shapes = ListItemDefaults.segmentedShapes(7, count),
                     title = stringRes(R.string.pref__keyboard__incognito_indicator__label),
                     entries = enumDisplayEntriesOf(IncognitoDisplayMode::class),
                 )

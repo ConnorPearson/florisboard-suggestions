@@ -453,6 +453,10 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "keyboard__key_spacing_horizontal",
             default = 100,
         )
+        val keyboardHeightFactor = int(
+            key = "keyboard__height_factor",
+            default = 100,
+        )
         val popupEnabled = boolean(
             key = "keyboard__popup_enabled",
             default = true,
