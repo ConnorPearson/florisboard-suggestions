@@ -21,6 +21,7 @@ import dev.patrickgold.florisboard.appContext
 import dev.patrickgold.florisboard.ime.core.Subtype
 import dev.patrickgold.florisboard.ime.nlp.SpellingProvider
 import dev.patrickgold.florisboard.ime.nlp.SpellingResult
+import dev.patrickgold.florisboard.ime.keyboard3.extractWordForCompletion
 import dev.patrickgold.florisboard.ime.nlp.SuggestionCandidate
 import dev.patrickgold.florisboard.ime.nlp.SuggestionProvider
 import dev.patrickgold.florisboard.lib.devtools.flogDebug
@@ -43,6 +44,8 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
     private val appContext by context.appContext()
 
     private val wordData = guardedByLock { mutableMapOf<String, Int>() }
+    // Rebuilt after the dictionary loads. Guarded by [wordData]'s lock.
+    private var suggester: PrefixSuggester = PrefixSuggester(emptyMap())
     private val wordDataSerializer = MapSerializer(String.serializer(), Int.serializer())
 
     override val providerId = ProviderId
@@ -74,6 +77,7 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
                 val rawData = appContext.assets.readText("ime/dict/data.json")
                 val jsonData = Json.decodeFromString(wordDataSerializer, rawData)
                 wordData.putAll(jsonData)
+                suggester = PrefixSuggester(wordData)
             }
         }
     }
@@ -105,21 +109,10 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
         allowPossiblyOffensive: Boolean,
         isPrivateSession: Boolean,
     ): List<SuggestionCandidate> {
-        return emptyList()
-        /*val word = content.composingText.ifBlank { "next" }
-        val suggestions = buildList {
-            for (n in 0 until maxCandidateCount) {
-                add(WordSuggestionCandidate(
-                    text = "$word$n",
-                    secondaryText = if (n % 2 == 1) "secondary" else null,
-                    confidence = 0.5,
-                    isEligibleForAutoCommit = false,//n == 0 && word.startsWith("auto"),
-                    // We set ourselves as the source provider so we can get notify events for our candidate
-                    sourceProvider = this@LatinLanguageProvider,
-                ))
-            }
+        val typed = extractWordForCompletion(content.surroundingText.textBefore)
+        return wordData.withLock {
+            suggester.suggest(typed, maxCandidateCount, sourceProvider = this@LatinLanguageProvider)
         }
-        return suggestions*/
     }
 
     override suspend fun notifySuggestionAccepted(subtype: Subtype, candidate: SuggestionCandidate) {
