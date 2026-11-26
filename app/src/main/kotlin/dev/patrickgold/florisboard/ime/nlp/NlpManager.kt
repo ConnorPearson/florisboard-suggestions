@@ -89,6 +89,16 @@ class NlpManager(context: Context) {
         clipboardManager.primaryClipFlow.collectLatestIn(scope) {
             assembleCandidates()
         }
+        imeController.activeState.collectLatestIn(scope) { state ->
+            when {
+                state.flags.isIncognitoMode -> clearSuggestions()
+                state.editor.info.isRichInputEditor && isSuggestionOn() -> {
+                    // Trigger suggestions when typing and suggestions are enabled
+                    suggest(subtypeManager.activeSubtype, state.content)
+                }
+                else -> clearSuggestions()
+            }
+        }
         prefs.suggestion.enabled.asFlow().collectLatestIn(scope) {
             assembleCandidates()
         }

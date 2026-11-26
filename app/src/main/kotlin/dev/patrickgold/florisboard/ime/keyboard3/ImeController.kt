@@ -523,23 +523,31 @@ class ImeController(
         fun emitCompletion(candidate: SuggestionCandidate): Boolean {
             val text = candidate.text.toString()
             if (text.isEmpty() || state.editor.info.isRawInputEditor) return false
-//            val content = activeContent
-//            return if (content.composing.isValid) {
-//                phantomSpace.setActive(showComposingRegion = false, candidate = candidate)
-//                super.finalizeComposingText(text)
-//            } else {
-//                val isPhantomSpaceActive = phantomSpace.determine(text)
-//                phantomSpace.setActive(showComposingRegion = false, candidate = candidate)
-//                return if (isPhantomSpaceActive) {
-//                    super.commitText("$SPACE$text")
-//                } else {
-//                    super.commitText(text)
-//                }.also {
-//                    // handled in finalizeComposingText if content.composing.isValid
-//                    updateLastCommitPosition()
-//                }
-//            }
-            return false
+            val content = state.content
+            if (content.selection.isNotCollapsed()) {
+                emitText("$text ".asK3String())
+                return true
+            }
+            // Replace the partial word in the model and the editor in a single edit, so the internal input context
+            // stays in sync (deleting via the editor directly leaves the stale word in inputContext).
+            val textBefore = content.surroundingText.textBefore
+            val newTextBefore = applyCompletion(textBefore, text)
+            val newSurroundingText = content.surroundingText.copy(textBefore = newTextBefore)
+            val range = content.offset..<content.selection.min
+            val newSelection = K3TextRange(content.offset + newTextBefore.length)
+            val newComposition = evaluateCompositionOf(state.model, newSelection, newSurroundingText)
+            state = state.copy(
+                content = content.copy(
+                    selection = newSelection,
+                    composition = newComposition,
+                    surroundingText = newSurroundingText,
+                    inputContext = newTextBefore.asK3String(),
+                ),
+            )
+            state.editor.replaceText(range, newTextBefore, newSelection, newComposition)
+            expectedContentQueue.push(state.content)
+            reevaluateInputShiftState()
+            return true
         }
 
         override fun switchTouchLayer(newTouchLayerId: K3LayerId) {
@@ -694,4 +702,19 @@ fun K3Content.cursorCapsMode(inputAttributes: InputAttributes): InputAttributes.
     return InputAttributes.CapsMode.fromFlags(
         TextUtils.getCapsMode(surroundingText.textBefore, surroundingText.textBefore.length, inputAttributes.raw)
     )
+}
+
+/**
+ * Returns the word fragment at the end of [textBefore] that a completion would replace. Shared by the suggestion
+ * provider (to decide what to complete) and the completion emitter (to decide what to replace), so both agree.
+ */
+fun extractWordForCompletion(textBefore: String): String {
+    return textBefore.takeLastWhile { it.isLetter() || it == '\'' }
+}
+
+/**
+ * Returns [textBefore] with its trailing word fragment replaced by [suggestion], followed by a space.
+ */
+fun applyCompletion(textBefore: String, suggestion: String): String {
+    return textBefore.dropLast(extractWordForCompletion(textBefore).length) + suggestion + " "
 }
