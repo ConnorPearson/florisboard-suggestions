@@ -26,6 +26,7 @@ import dev.patrickgold.florisboard.ime.clipboard.provider.ItemType
 import dev.patrickgold.florisboard.ime.core.Subtype
 import dev.patrickgold.florisboard.ime.media.emoji.EmojiSuggestionProvider
 import dev.patrickgold.florisboard.ime.nlp.latin.LatinLanguageProvider
+import dev.patrickgold.florisboard.ime.smartbar.SharedActionsAutoToggle
 import dev.patrickgold.florisboard.inferFlorisApplication
 import dev.patrickgold.florisboard.lib.util.NetworkUtils
 import dev.patrickgold.florisboard.subtypeManager
@@ -307,6 +308,17 @@ class NlpManager(context: Context) {
         }
     }
 
+    private val sharedActionsAutoToggle = SharedActionsAutoToggle()
+
+    /**
+     * Called when the keyboard opens in a new field. Makes the next evaluation apply the default (including the
+     * "collapse on open" preference) even if the suggestions did not change.
+     */
+    fun onKeyboardOpened() {
+        sharedActionsAutoToggle.reset()
+        scope.launch { assembleCandidates() }
+    }
+
     fun autoExpandCollapseSmartbarActions(list1: List<*>?, list2: List<*>?) {
         if (!prefs.smartbar.enabled.get()) {// || !prefs.smartbar.sharedActionsAutoExpandCollapse.get()) {
             return
@@ -321,7 +333,14 @@ class NlpManager(context: Context) {
                    // menu is visible to prevent annoying UI changes
         }*/
         val isSelection = imeController.snapshotState().content.selection.isNotCollapsed()
-        val isExpanded = list1.isNullOrEmpty() && list2.isNullOrEmpty() || isSelection
+        // Only acts when the candidates, selection or preference changed. Re-evaluating with unchanged inputs must not
+        // override the user's manual toggle of the actions row.
+        val isExpanded = sharedActionsAutoToggle.update(
+            candidates = list1.orEmpty(),
+            inlineSuggestions = list2.orEmpty(),
+            hasSelection = isSelection,
+            collapsedByDefault = prefs.smartbar.sharedActionsCollapseOnOpen.get(),
+        ) ?: return
         scope.launch {
             prefs.smartbar.sharedActionsExpandWithAnimation.set(false)
             prefs.smartbar.sharedActionsExpanded.set(isExpanded)

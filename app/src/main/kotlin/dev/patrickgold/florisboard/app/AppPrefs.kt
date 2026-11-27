@@ -597,6 +597,10 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "smartbar__shared_actions_auto_expand_collapse",
             default = true,
         )
+        val sharedActionsCollapseOnOpen = boolean(
+            key = "smartbar__shared_actions_collapse_on_open",
+            default = false,
+        )
         val sharedActionsExpandWithAnimation = boolean(
             key = "smartbar__shared_actions_expand_with_animation",
             default = true,

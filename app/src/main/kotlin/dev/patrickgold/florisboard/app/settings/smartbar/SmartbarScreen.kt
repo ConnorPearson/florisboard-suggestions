@@ -59,7 +59,7 @@ fun SmartbarScreen() {
             }
 
             SegmentedListColumn(title = stringRes(R.string.pref__smartbar__group_layout_specific__label)) {
-                val count = 4
+                val count = 5
                 ListPreference(
                     prefs.suggestion.displayMode,
                     shapes = ListItemDefaults.segmentedShapes(0, count),
@@ -79,6 +79,14 @@ fun SmartbarScreen() {
                             prefs.smartbar.layout isEqualTo SmartbarLayout.SUGGESTIONS_ACTIONS_EXTENDED
                     },
                 )
+                SwitchPreference(
+                    prefs.smartbar.sharedActionsCollapseOnOpen,
+                    shapes = ListItemDefaults.segmentedShapes(2, count),
+                    title = "Start with actions closed",
+                    summary = "Show the suggestions row instead of the actions row each time the keyboard opens",
+                    enabledIf = { prefs.smartbar.enabled isEqualTo true },
+                    visibleIf = { prefs.smartbar.layout isEqualTo SmartbarLayout.SUGGESTIONS_ACTIONS_SHARED },
+                )
                 // TODO: schedule to remove this preference in the future, but keep it for now so users
                 //  know why the setting is not available anymore. Also force enable it for UI display.
                 SideEffect {
@@ -86,7 +94,7 @@ fun SmartbarScreen() {
                 }
                 SwitchPreference(
                     prefs.smartbar.sharedActionsAutoExpandCollapse,
-                    shapes = ListItemDefaults.segmentedShapes(2, count),
+                    shapes = ListItemDefaults.segmentedShapes(3, count),
                     title = stringRes(R.string.pref__smartbar__shared_actions_auto_expand_collapse__label),
                     summary = "[Since v0.4.1] Always enabled due to UX issues",
                     enabledIf = { false },
@@ -94,7 +102,7 @@ fun SmartbarScreen() {
                 )
                 ListPreference(
                     listPref = prefs.smartbar.extendedActionsPlacement,
-                    shapes = ListItemDefaults.segmentedShapes(3, count),
+                    shapes = ListItemDefaults.segmentedShapes(4, count),
                     title = stringRes(R.string.pref__smartbar__extended_actions_placement__label),
                     entries = enumDisplayEntriesOf(ExtendedActionsPlacement::class),
                     enabledIf = { prefs.smartbar.enabled isEqualTo true },

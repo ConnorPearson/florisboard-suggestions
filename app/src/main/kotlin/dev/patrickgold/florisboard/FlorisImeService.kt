@@ -367,6 +367,9 @@ class FlorisImeService : LifecycleInputMethodService() {
         currentInputConnection?.requestCursorUpdates(ImeEditor.CURSOR_UPDATES)
         val ic = WeakReference(currentInputConnection)
         val editorInfo = FlorisEditorInfo.wrap(info)
+        if (!restarting) {
+            nlpManager.onKeyboardOpened()
+        }
         imeController.updateStateBlocking {
             handleStartInputView(ic, editorInfo)
         }
