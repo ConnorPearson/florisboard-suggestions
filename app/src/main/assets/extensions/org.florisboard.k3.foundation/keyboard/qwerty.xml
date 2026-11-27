@@ -224,6 +224,9 @@
         <key id="symbols-numeric" layerId="symbol-1" width="1.9" />
         <key id="equal-numeric" output="=" width="1.9" />
         <key id="period-numeric" output="." width="1.1" />
+
+        <!-- period key right of the space bar, with ? on long press -->
+        <key id="period-touch" output="." longPressKeyIds="question" longPressDefaultKeyId="question" />
         <key id="enter-numeric" output="@k3:action/enter" width="1.8" />
         <key id="0-numeric" width="3" output="0" />
         <key id="1-numeric" width="3" output="1" />
@@ -277,21 +280,21 @@
             <row keys="q w e r t y u i o p" />
             <row keys="a s d f g h j k l" />
             <row keys="base-to-shift z x c v b n m bksp" />
-            <row keys="symbol-1 comma emoji space period enter" />
+            <row keys="symbol-1 comma emoji space period-touch enter" />
         </layer>
 
         <layer id="shift">
             <row keys="Q W E R T Y U I O P" />
             <row keys="A S D F G H J K L" />
             <row keys="shift-to-base Z X C V B N M bksp" />
-            <row keys="symbol-1 comma emoji space period enter" />
+            <row keys="symbol-1 comma emoji space period-touch enter" />
         </layer>
 
         <layer id="symbol-1">
             <row keys="1 2 3 4 5 6 7 8 9 0" />
             <row keys="at hash euro percent amp hyphen plus open-paren close-paren slash" />
             <row keys="symbol-2 asterisk double-quote apos colon semi-colon bang question bksp" />
-            <row keys="base comma numeric space period enter" />
+            <row keys="base comma numeric space period-touch enter" />
         </layer>
 
         <layer id="symbol-2">
