@@ -3,7 +3,7 @@ src=".github/repo_icon.png" alt="App icon">
 
 # FlorisBoard Suggestions [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-A personal fork of [FlorisBoard](https://github.com/florisboard/florisboard), the free and open-source keyboard for Android 8.0+ devices. This fork adds on-device word suggestions, an adjustable keyboard height, larger emoji page controls and QWERTY long-press hints.
+A personal fork of [FlorisBoard](https://github.com/florisboard/florisboard), the free and open-source keyboard for Android 8.0+ devices. This fork adds on-device word suggestions, an adjustable keyboard height, larger emoji page controls, QWERTY long-press hints, an option to start with the Smartbar actions closed, and an adjustable bottom bar.
 
 > [!IMPORTANT]
 > This is an unofficial fork. It is not affiliated with or endorsed by the FlorisBoard project, and it is not published to any app store. For the official keyboard, releases and support, please use the [upstream project](https://github.com/florisboard/florisboard).
@@ -28,7 +28,19 @@ A personal fork of [FlorisBoard](https://github.com/florisboard/florisboard), th
 
 ### QWERTY layout
 - Long-press hints: the top row shows `1`-`0` and the home row shows `@ # $ % & - + ( )`. Long-press a key to insert the hinted character. The existing accent popups are still available in the same popup.
+- The period key to the right of the space bar has `?` on long press, with a `?` hint on the key.
 - The keyboard now loads the QWERTY layout. Upstream's placeholder loader was hardcoded to a QWERTZ test layout. The layout is still fixed and is not chosen by language.
+
+### Smartbar
+- A new **Start with actions closed** setting (Settings > Smartbar) opens the keyboard on the suggestions row instead of the actions row. You can still open the actions with the arrow at the start of the Smartbar, and selecting text still opens them. The setting only appears with the default layout, where suggestions and actions share one row.
+- Opening or closing the actions row by hand is kept until the suggestions or the text selection change. It is no longer overridden every time the keyboard updates.
+
+### Bottom bar
+- Android draws a bar below the keyboard with a hide-keyboard arrow and a keyboard switcher button. Its height and buttons cannot be changed, so this fork hides it and draws its own bar in the docked keyboard.
+- **Bottom bar height** (Settings > Keyboard) sets the height from 0 to 64 dp in steps of 4, with 48 dp as the default. At 0 the bar is hidden and the keyboard runs to the bottom edge of the screen. The two buttons shrink and grow with the bar.
+- **Bottom bar buttons** turns the hide-keyboard and keyboard switcher buttons on or off. With the buttons off, the bar stays as an empty strip of the chosen height. The switcher button switches to the next keyboard, and a long press opens Android's keyboard picker.
+- With the bar hidden, hide the keyboard with the back gesture.
+- The bar's height, the buttons switch and the button icon sizes were checked on Android 15 with gesture navigation and the gesture pill turned off. The button actions themselves and phones that show the gesture pill have not been tested. The floating keyboard keeps its own controls.
 
 ## Building
 
