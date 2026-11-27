@@ -235,6 +235,7 @@ private fun ImeInnerWindow() {
                 ImeUiMode.CLIPBOARD -> ProvideActualLayoutDirection { ClipboardInputLayout() }
             }
             ImeSystemUiFloating()
+            ImeBottomBar()
         }
         ImeWindowResizeHandlesFixed()
     }

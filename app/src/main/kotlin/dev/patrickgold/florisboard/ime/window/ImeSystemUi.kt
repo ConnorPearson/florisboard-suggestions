@@ -71,17 +71,13 @@ import org.florisboard.lib.snygg.ui.uriOrNull
 /**
  * Configures the system navigation and caption bar.
  *
+ * The system caption bar (hide keyboard and keyboard switcher buttons) is always hidden, because its height and buttons
+ * cannot be adjusted. [ImeBottomBar] draws a replacement in fixed window mode.
+ *
  * Itself this composable does not take up any space in the layout.
  */
 @Composable
 fun ImeSystemUi() {
-    val windowController = LocalWindowController.current
-
-    val windowSpec by windowController.activeWindowSpec.collectAsState()
-    val isSystemNavbarVisible by remember {
-        derivedStateOf { windowSpec is ImeWindowSpec.Fixed }
-    }
-
     val backgroundQuery = rememberSnyggThemeQuery(FlorisImeUi.Window.elementName)
     val backgroundColor = backgroundQuery.background()
     val backgroundImage = backgroundQuery.backgroundImage.uriOrNull()
@@ -97,12 +93,8 @@ fun ImeSystemUi() {
     val window = view.context.findWindow()!!
     val windowInsetsController = WindowInsetsControllerCompat(window, view)
 
-    LaunchedEffect(isSystemNavbarVisible) {
-        if (isSystemNavbarVisible) {
-            windowInsetsController.show(WindowInsetsCompat.Type.captionBar())
-        } else {
-            windowInsetsController.hide(WindowInsetsCompat.Type.captionBar())
-        }
+    LaunchedEffect(Unit) {
+        windowInsetsController.hide(WindowInsetsCompat.Type.captionBar())
     }
 
     LaunchedEffect(useDarkIcons, hasBackgroundImage) {

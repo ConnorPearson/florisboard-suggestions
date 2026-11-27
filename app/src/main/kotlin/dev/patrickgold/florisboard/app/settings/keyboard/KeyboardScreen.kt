@@ -88,7 +88,7 @@ fun KeyboardScreen() {
     ) { contentPadding ->
         ScrollableScreenColumn(contentPadding) {
             SegmentedListColumn {
-                val count = 8
+                val count = 10
                 SwitchPreference(
                     prefs.keyboard.numberRow,
                     shapes = ListItemDefaults.segmentedShapes(0, count),
@@ -151,6 +151,24 @@ fun KeyboardScreen() {
                     shapes = ListItemDefaults.segmentedShapes(7, count),
                     title = stringRes(R.string.pref__keyboard__incognito_indicator__label),
                     entries = enumDisplayEntriesOf(IncognitoDisplayMode::class),
+                )
+                DialogSliderPreference(
+                    prefs.keyboard.bottomBarHeight,
+                    shapes = ListItemDefaults.segmentedShapes(8, count),
+                    title = "Bottom bar height",
+                    valueLabel = {
+                        if (it == 0) "Hidden" else stringRes(R.string.unit__display_pixel__symbol, "v" to it)
+                    },
+                    min = 0,
+                    max = 64,
+                    stepIncrement = 4,
+                )
+                SwitchPreference(
+                    prefs.keyboard.bottomBarButtonsVisible,
+                    shapes = ListItemDefaults.segmentedShapes(9, count),
+                    title = "Bottom bar buttons",
+                    summary = "Show the hide-keyboard and keyboard switcher buttons in the bottom bar",
+                    enabledIf = { prefs.keyboard.bottomBarHeight isNotEqualTo 0 },
                 )
             }
 

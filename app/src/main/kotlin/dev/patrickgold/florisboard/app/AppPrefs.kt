@@ -457,6 +457,14 @@ abstract class FlorisPreferenceModel : PreferenceModel() {
             key = "keyboard__height_factor",
             default = 100,
         )
+        val bottomBarHeight = int(
+            key = "keyboard__bottom_bar_height",
+            default = 48,
+        )
+        val bottomBarButtonsVisible = boolean(
+            key = "keyboard__bottom_bar_buttons_visible",
+            default = true,
+        )
         val popupEnabled = boolean(
             key = "keyboard__popup_enabled",
             default = true,
